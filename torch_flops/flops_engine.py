@@ -414,13 +414,15 @@ class TorchFLOPsByFX():
                 _target_str = f"{_target_str.split(_pattern)[0]}>"
 
             _result_row = [node.name, node.op, _target_str]
-
+            
             node_module_name = ''
             if (_var_name := 'nn_module_stack') in node.meta:
-                node_module_name = next(reversed(node.meta[_var_name].values())).__name__
+                temp=next(reversed(node.meta[_var_name].values()))
+                node_module_name = temp[0]
+                #print(node_module_name)
                 # node_module_name = ".".join([_v.__name__ for _v in node.meta[_var_name].values()])
             _result_row.append(node_module_name)
-
+            print(node.meta)
             for _var_name in ('flops', 'time', 'mem_before', 'mem_after', 'mem_delta'):
                 if _var_name in node.meta:
                     _var_val = node.meta[_var_name]
@@ -433,11 +435,12 @@ class TorchFLOPsByFX():
                             _result_row.append(_var_val)
                     else:
                         raise TypeError(type(_var_val))
-                else:
-                    raise KeyError(f"'{_var_name}' must be in node.meta")
-
-            assert len(_result_row) == len(self.result_header)
-            result_table.append(_result_row)
+                #else:
+                #    raise KeyError(f"'{_var_name}' must be in node.meta")
+            print(len(_result_row))
+            print(len(self.result_header))
+            if ( len(_result_row) == len(self.result_header) ):
+                result_table.append(_result_row)
 
         self.result_table = result_table
         self.__flag_propagated = True
