@@ -163,13 +163,14 @@ class MultiHeadLatentAttention(nn.Module):
 device = 'cuda:0'
         
 mla = MultiHeadLatentAttention(512, 8, 512, 64, 64, 64) # (model_dim, num_head, d_embed, d_c, d_c1, d_rotate)
-attention_input = torch.randn(2, 16, 512) # (batch_size, seq_len, model_dim)
+attention_input = torch.randn(1, 16, 512) # (batch_size, seq_len, model_dim)
 output = mla(attention_input)
 print(output.shape)
 
-model = mla
-model.to(device)
-x=attention_input.to(device)
+mla_model = mla
+model = mla_model.to(device).half()
+
+x=attention_input.to(device).half()
 # Run a forward pass.
 with torch.no_grad():
     output=model(x)
